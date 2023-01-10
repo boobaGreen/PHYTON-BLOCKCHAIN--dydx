@@ -1,4 +1,4 @@
-from constants import CLOSE_AT_ZSCORE_CROSS
+from constants import CLOSE_AT_ZSCORE_CROSS ,MODE
 from func_utils import format_number
 from func_public import get_candles_recent
 from func_cointegration import calculate_zscore
@@ -106,6 +106,12 @@ def manage_trade_exits(client):
       if len(series_1) > 0 and len(series_1) == len(series_2):
         spread = series_1 - (hedge_ratio * series_2)
         z_score_current = calculate_zscore(spread).values.tolist()[-1]
+        print("------------------------------------------------------------------------------------------")
+        print("series_1 :",series_1)
+        print("series_2 :",series_2)
+        print("position_market_m1 :",position_market_m1,"position_market_m2: ",position_market_m2)
+        print("z_score_current :",z_score_current,"z_score_traded: ",z_score_traded)
+
 
       # Determine trigger
       z_score_level_check = abs(z_score_current) >= abs(z_score_traded)
@@ -123,8 +129,9 @@ def manage_trade_exits(client):
     ###
 
     # Close positions if triggered
-    if is_close:
+    
 
+    if is_close :
       # Determine side - m1
       side_m1 = "SELL"
       if position_side_m1 == "SELL":
