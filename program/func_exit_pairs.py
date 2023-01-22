@@ -34,7 +34,6 @@ def manage_trade_exits(client):
     storico_file = open("storico.json")
     storico_dict = json.load(storico_file)
     for sto in storico_dict:
-      print(sto)
       storico.append(sto)
   except:
     print("file JSON storico.json non trovato o in errore (func exit)...")
@@ -64,7 +63,7 @@ def manage_trade_exits(client):
     
 
     # Initialize is_close trigger
-    is_close = True      # da rimetter False usato solo x test chiusure
+    is_close = False    # da rimetter False usato solo x test chiusure
 
     # Extract position matching information from file - market 1
     position_market_m1 = position["market_1"]

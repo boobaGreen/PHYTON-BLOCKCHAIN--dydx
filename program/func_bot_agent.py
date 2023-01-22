@@ -135,7 +135,7 @@ class BotAgent:
       self.order_dict["comments"] = f"Market 1 {self.market_1}: , {e}"
       return self.order_dict
 
-    # Ensure order is live before processing
+    # Ensure order 1 is live before processing
     order_status_m1 = self.check_order_status_by_id(self.order_dict["order_id_m1"])
 
     # Guard: Aborder if order failed
@@ -169,7 +169,7 @@ class BotAgent:
       self.order_dict["comments"] = f"Market 2 {self.market_2}: , {e}"
       print(self.order_dict["comments"])
       return self.order_dict
-
+    time.sleep(2)
     # Ensure order is live before processing
     order_status_m2 = self.check_order_status_by_id(self.order_dict["order_id_m2"])
 
@@ -203,7 +203,7 @@ class BotAgent:
 
           # ABORT
           exit(1)
- 
+        return self.order_dict ############################### aggiunto io per evitare l'errore quando il #secondo ordine e' CANCELED
       except Exception as e:
         self.order_dict["pair_status"] = "ERROR"
         self.order_dict["comments"] = f"Close Market 1 {self.market_1}: , {e}"
