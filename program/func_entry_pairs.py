@@ -197,5 +197,5 @@ def open_positions(client):
 
   # Save agents
   print(f"Success: Manage open trades checked- aggiornamento di fine ciclo json")
-  del bot_agent
+  del bot_agents
   del storico  
