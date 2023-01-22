@@ -39,13 +39,15 @@ def place_market_order(client, market, side, size, price, reduce_only):
   # Get Position Id
   account_response = client.private.get_account()
   position_id = account_response.data["account"]["positionId"]
-
+  
   # Get expiration time
   server_time = client.public.get_time()
-  expiration = datetime.fromisoformat(server_time.data["iso"].replace("Z", "")) + timedelta(seconds=2000)
-
+  expiration = datetime.fromisoformat(server_time.data["iso"].replace("Z", "")) + timedelta(seconds=120)
   # Place an order
-  expiration_epoch_seconds=expiration.timestamp(),
+  expiration_epoch_seconds=expiration.timestamp()
+  
+  
+
   placed_order = client.private.create_order(
     position_id=position_id, # required for creating the order signature
     market=market,
@@ -55,13 +57,12 @@ def place_market_order(client, market, side, size, price, reduce_only):
     size=size,
     price=price,
     limit_fee='0.015',
-
-    expiration_epoch_seconds=time.time() + 65,
+    expiration_epoch_seconds=time.time() + 120,
     time_in_force="FOK", 
     reduce_only=reduce_only
   )
 
-  # print(placed_order.data)
+  print(placed_order.data)
 
   # Return result
   return placed_order.data

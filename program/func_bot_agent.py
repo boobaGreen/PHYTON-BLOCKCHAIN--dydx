@@ -79,11 +79,16 @@ class BotAgent:
     if order_status == "CANCELED":
       print(f"{self.market_1} vs {self.market_2} - Order cancelled...")
       self.order_dict["pair_status"] = "FAILED"
+      ####aggiunto io
+      print("In corso un CANCELED -  pauso 60 sec...")
+      time.sleep(60)
+      # quindi da togliere se non necessario
       return "failed"
 
     # Guard: If order not filled wait until order expiration
     if order_status != "FAILED":
-      time.sleep(10)
+      time.sleep(15)# 15 in originale
+      print("attendo allineamento ordini 15 sec... : ",order_status )
       order_status = check_order_status(self.client, order_id)
 
       # Guard: If order cancelled move onto next Pair
@@ -162,6 +167,7 @@ class BotAgent:
     except Exception as e:
       self.order_dict["pair_status"] = "ERROR"
       self.order_dict["comments"] = f"Market 2 {self.market_2}: , {e}"
+      print(self.order_dict["comments"])
       return self.order_dict
 
     # Ensure order is live before processing
@@ -170,7 +176,8 @@ class BotAgent:
     # Guard: Aborder if order failed
     if order_status_m2 != "live":
       self.order_dict["pair_status"] = "ERROR"
-      self.order_dict["comments"] = f"{self.market_1} failed to fill"
+      ############################### self.market_1 in originale
+      self.order_dict["comments"] = f"{self.market_2} failed to fill"
 
       # Close order 1:
       try:
@@ -196,6 +203,7 @@ class BotAgent:
 
           # ABORT
           exit(1)
+ 
       except Exception as e:
         self.order_dict["pair_status"] = "ERROR"
         self.order_dict["comments"] = f"Close Market 1 {self.market_1}: , {e}"
@@ -212,5 +220,8 @@ class BotAgent:
     # Return success result
     else:
       self.order_dict["pair_status"] = "LIVE"
+      ################################################
+      ################################################
+      # crea file con nuovo trades x statistiche e backtest
       return self.order_dict
       

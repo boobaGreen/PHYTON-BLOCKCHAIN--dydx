@@ -44,7 +44,7 @@ def get_candles_historical(client, market):
 
   # Extract historical price data for each timeframe
   for timeframe in ISO_TIMES.keys():
-
+   
     # Confirm times needed
     tf_obj = ISO_TIMES[timeframe]
     from_iso = tf_obj["from_iso"]
@@ -68,6 +68,7 @@ def get_candles_historical(client, market):
 
   # Construct and return DataFrame
   close_prices.reverse()
+ 
   return close_prices
 
 

@@ -1,23 +1,26 @@
 from dydx3.constants import API_HOST_GOERLI, API_HOST_MAINNET
 from decouple import config
 
-TOKEN_FACTOR_10 = ["XLM-USD","DOGE-USD"]
+TOKEN_FACTOR_10 = ["XLM-USD","DOGE-USD","TRX-USD"]
 
 # !!!! SELECT MODE !!!!
 MODE = "DEVELOPMENT"
 # DEVELOPMENT O PRODUCTION
 
+
+
 # Close all open positions and orders
-ABORT_ALL_POSITIONS = False
+ABORT_ALL_POSITIONS = 1
 
 # Find Cointegrated Pairs
-FIND_COINTEGRATED = False
+FIND_COINTEGRATED = 1
 
 # Manage Exits
-MANAGE_EXITS = True
+MANAGE_EXITS = 1
 
 # Place Trades
-PLACE_TRADES = True
+PLACE_TRADES = 1
+STORICO_ORDINI= 0
 
 # Resolution
 RESOLUTION = "1HOUR"
@@ -30,6 +33,7 @@ MAX_HALF_LIFE = 24
 ZSCORE_THRESH = 1.5
 USD_PER_TRADE = 100
 USD_MIN_COLLATERAL = 1000
+
 
 # Thresholds - Closing
 CLOSE_AT_ZSCORE_CROSS = True

@@ -1,5 +1,7 @@
 from constants import ZSCORE_THRESH, USD_PER_TRADE, USD_MIN_COLLATERAL,TOKEN_FACTOR_10 
 from func_utils import format_number
+import time
+from datetime import datetime
 from func_public import get_candles_recent
 from func_cointegration import calculate_zscore
 from func_private import is_open_positions
@@ -27,6 +29,8 @@ def open_positions(client):
   # Initialize container for BotAgent results
   bot_agents = []
 
+  storico = []
+
   # Opening JSON file
   try:
     open_positions_file = open("bot_agents.json")
@@ -35,6 +39,15 @@ def open_positions(client):
       bot_agents.append(p)
   except:
     bot_agents = []
+
+#################################################
+  try:
+    storico_file = open("storico.json")
+    storico_dict = json.load(storico_file)
+    for p in storico_dict:
+      storico.append(p)
+  except:
+    storico = []  
   
   # Find ZScore triggers
   for index, row in df.iterrows():
@@ -52,6 +65,10 @@ def open_positions(client):
     # Get ZScore
     if len(series_1) > 0 and len(series_1) == len(series_2):
       spread = series_1 - (hedge_ratio * series_2)
+      ###########################################
+       #PRENDO DAL FOGLIO EXCEL MA POTREBBERO NON ESSERE PIU' COINTEGRATE OPPURE 
+       #PER ESEMPIO p>0,005
+       #oppure rifaccio ripartire tutto ogni ora
       z_score = calculate_zscore(spread).values.tolist()[-1]
 
       # Establish if potential trade
@@ -135,7 +152,9 @@ def open_positions(client):
 
             # Open Trades
             bot_open_dict = bot_agent.open_trades()
+            
 
+               
             # Guard: Handle failure
             if bot_open_dict == "failed":
               continue
@@ -143,16 +162,40 @@ def open_positions(client):
             # Handle success in opening trades
             if bot_open_dict["pair_status"] == "LIVE":
 
+              nowtemp = datetime.now()
+              now = nowtemp.strftime("%d/%m/%Y %H:%M:%S")
+              ################################################################
+
+              if base_side=="BUY" :
+                base_tot = -(float(base_price)*float(base_size))
+                quote_tot = (float(quote_price)*float(quote_size))
+              
+              if base_side=="SELL":
+                base_tot = (float(base_price)*float(base_size))
+                quote_tot = -(float(quote_price)*float(quote_size))
+
+              posizione= {"market_1":base_market, "market_2":quote_market,"base_side":base_side,"base_size":base_size,"base_price":accept_base_price,"quote_side":quote_side,"quote_size":quote_size,"quote_price":accept_quote_price,"z_score":z_score,"half_life":half_life,
+              "order_time_m1":now,"order_time_m2":now,
+              "order_id_m1":bot_open_dict["order_id_m1"],"order_id_m2":bot_open_dict["order_id_m2"],"base_tot":base_tot,"quote_tot":quote_tot}
+
+              storico.append(posizione)
+              ##############################################################
               # Append to list of bot agents
               bot_agents.append(bot_open_dict)
-              del(bot_open_dict)
-
+              print("Ok - trade aperto on dydx - aggiorno anche json")
+              if len(bot_agents) > 0:
+                with open("bot_agents.json", "w") as f:json.dump(bot_agents, f)
               # Confirm live status in print
               print("Trade status: Live")
               print("---")
+              ##################################################################
+              #QUI VORREI INSERIRE L'APERTURA DELL'ORDINE NELLO STORICO ORDINI
+              if len(storico) > 0:
+                with open("storico.json", "w") as f:json.dump(storico, f)
+                
+
 
   # Save agents
-  print(f"Success: Manage open trades checked")
-  if len(bot_agents) > 0:
-    with open("bot_agents.json", "w") as f:
-      json.dump(bot_agents, f)
+  print(f"Success: Manage open trades checked- aggiornamento di fine ciclo json")
+  del bot_agent
+  del storico  
