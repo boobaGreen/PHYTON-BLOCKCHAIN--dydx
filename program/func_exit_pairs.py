@@ -151,7 +151,7 @@ def manage_trade_exits(client):
       if z_score_level_check and z_score_cross_check:
 
         # Initiate close trigger
-        is_close = True
+        is_close = False
 
     ###
     # Add any other close logic you want here
