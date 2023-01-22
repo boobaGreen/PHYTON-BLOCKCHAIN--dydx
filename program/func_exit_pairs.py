@@ -5,6 +5,7 @@ from func_cointegration import calculate_zscore
 from func_private import place_market_order
 import json
 import time
+from datetime import datetime
 
 from pprint import pprint
 
@@ -18,16 +19,27 @@ def manage_trade_exits(client):
 
   # Initialize saving output
   save_output = []
+  storico=[]
 
   # Opening JSON file
   try:
     open_positions_file = open("bot_agents.json")
     open_positions_dict = json.load(open_positions_file)
   except:
-    print("file JSON non trovato o in errore ...")
+    print("file JSON bot_agents.json non trovato o in errore (func exit)...")
     time.sleep(1)
     return "complete"
 
+  try:
+    storico_file = open("storico.json")
+    storico_dict = json.load(storico_file)
+    for sto in storico_dict:
+      print(sto)
+      storico.append(sto)
+  except:
+    print("file JSON storico.json non trovato o in errore (func exit)...")
+    storico = []  
+  print(storico,"storico")
   # Guard: Exit if no open positions in file
   if len(open_positions_dict) < 1:
     print("JSON vuoto nessun trade da gestire ...")
@@ -52,19 +64,21 @@ def manage_trade_exits(client):
     
 
     # Initialize is_close trigger
-    is_close = False
+    is_close = True      # da rimetter False usato solo x test chiusure
 
     # Extract position matching information from file - market 1
     position_market_m1 = position["market_1"]
     position_size_m1_n = float(position["order_m1_size"])
     position_size_m1 = position["order_m1_size"]
     position_side_m1 = position["order_m1_side"]
+    position_order_id_m1=position["order_id_m1"]
 
     # Extract position matching information from file - market 2
     position_market_m2 = position["market_2"]
     position_size_m2_n = float(position["order_m2_size"])
     position_size_m2 = position["order_m2_size"]
     position_side_m2 = position["order_m2_side"]
+    position_order_id_m2=position["order_id_m2"]
 
     # Protect API
     time.sleep(0.5)
@@ -212,9 +226,16 @@ def manage_trade_exits(client):
         #################################################
         # AGGIUNTA IN FILE STORICO ORDINI DELLA CHIUSURA DELLA COPPIA DI ORDINI
         # OPPURE TUTTO L'ORDINE (APERTURA E CHIUSURA VISTO CHE QUI HO TUTTI I DATI FORSE)
-
-        
-        
+        if side_m1=="BUY" :
+          base_tot = -(float(accept_price_m1)*float(position_size_m1))
+          quote_tot = (float(accept_price_m2)*float(position_size_m2))
+        if side_m1=="SELL":
+          base_tot = (float(accept_price_m1)*float(position_size_m1))
+          quote_tot = -(float(accept_price_m2)*float(position_size_m2))
+        nowtemp = datetime.now()
+        now = nowtemp.strftime("%d/%m/%Y %H:%M:%S")
+        posizione= {"market_1":position_market_m1, "market_2":position_market_m2,"base_side":side_m1,"base_size":position_size_m1,"base_price":accept_price_m1,"quote_side":side_m2,"quote_size":position_size_m2,"quote_price":accept_price_m2,"z_score":z_score_current,"half_life":"CHIUSURA","order_time_m1":now,"order_time_m2":now,"order_id_m1":position_order_id_m1,"order_id_m2":position_order_id_m2,"base_tot":base_tot,"quote_tot":quote_tot}
+        storico.append(posizione)
 
       except Exception as e:
         print(f"Exit failed for {position_market_m1} with {position_market_m2}")
@@ -227,5 +248,12 @@ def manage_trade_exits(client):
 
   # Save remaining items
   print(f"{len(save_output)} Items remaining. Saving file...aggiorno json")
+
+  if len(storico) > 0:
+    with open("storico.json", "w") as f:json.dump(storico, f)
+  
   with open("bot_agents.json", "w") as f:
     json.dump(save_output, f)
+
+  del save_output
+  del storico
