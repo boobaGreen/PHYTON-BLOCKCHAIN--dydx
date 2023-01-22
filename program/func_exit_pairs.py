@@ -38,7 +38,7 @@ def manage_trade_exits(client):
   except:
     print("file JSON storico.json non trovato o in errore (func exit)...")
     storico = []  
-  print(storico,"storico")
+  
   # Guard: Exit if no open positions in file
   if len(open_positions_dict) < 1:
     print("JSON vuoto nessun trade da gestire ...")
