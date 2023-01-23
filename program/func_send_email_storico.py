@@ -11,7 +11,7 @@ def send_email():
   ctx = ssl.create_default_context()
   password = "bhbvoftuqdowcoqq"    # Your app password goes here
   sender = "77bot77bot77@gmail.com"    # Your e-mail address
-  receiver = "claudiodallara77@gmail.com" # Recipient's address
+  receiver = "77bot77bot77@gmail.com" # Recipient's address
 
   # Create the message
   message = MIMEMultipart("mixed")

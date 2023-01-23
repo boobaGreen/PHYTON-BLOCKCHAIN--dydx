@@ -12,7 +12,7 @@ from func_send_email_storico import send_email
 
 # MAIN FUNCTION
 if __name__ == "__main__":
-
+  spedita=False
   # Message on start
   send_message("Bot launch successful")   # In fucn_messaging.py
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         exit(1)
     # Check
     if SEND_STORICO_EMAIL:
-      spedita=False
+      
       try:
         if not(spedita):
           print("Mando email con json storico...")
@@ -92,5 +92,5 @@ if __name__ == "__main__":
           spedita=True
       except Exception as e:
         print("Error send email json storico: ", e)
-        send_message(f"Error sen email json storico {e}")
+        send_message(f"Error send email json storico {e}")
         exit(1)    
