@@ -1,4 +1,4 @@
-from constants import ABORT_ALL_POSITIONS, FIND_COINTEGRATED, PLACE_TRADES, MANAGE_EXITS ,STORICO_ORDINI
+from constants import ABORT_ALL_POSITIONS, FIND_COINTEGRATED, PLACE_TRADES, MANAGE_EXITS ,SEND_STORICO_EMAIL
 from func_connections import connect_dydx
 from func_private import abort_all_positions
 from func_public import construct_market_prices
@@ -6,7 +6,7 @@ from func_cointegration import store_cointegration_results
 from func_entry_pairs import open_positions
 from func_exit_pairs import manage_trade_exits
 from func_messaging import send_message
-from func_get_closed_position import storico_ordini
+from func_send_email_storico import send_email
 
 
 
@@ -83,11 +83,14 @@ if __name__ == "__main__":
         send_message(f"Error opening trades {e}")
         exit(1)
     # Check
-    if STORICO_ORDINI:
+    if SEND_STORICO_EMAIL:
+      spedita=False
       try:
-        print("Finding prova storico ordini...")
-        storico_ordini(client)
+        if not(spedita):
+          print("Mando email con json storico...")
+          send_email()
+          spedita=True
       except Exception as e:
-        print("Error prova storico ordini: ", e)
-        send_message(f"Error prova storico ordini {e}")
+        print("Error send email json storico: ", e)
+        send_message(f"Error sen email json storico {e}")
         exit(1)    

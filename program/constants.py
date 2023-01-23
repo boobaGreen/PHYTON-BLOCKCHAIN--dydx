@@ -10,7 +10,7 @@ MODE = "DEVELOPMENT"
 
 
 # Close all open positions and orders
-ABORT_ALL_POSITIONS = 1
+ABORT_ALL_POSITIONS = 0
 
 # Find Cointegrated Pairs
 FIND_COINTEGRATED = 1
@@ -20,7 +20,8 @@ MANAGE_EXITS = 1
 
 # Place Trades
 PLACE_TRADES = 1
-STORICO_ORDINI= 0
+
+SEND_STORICO_EMAIL = 1
 
 # Resolution
 RESOLUTION = "1HOUR"
