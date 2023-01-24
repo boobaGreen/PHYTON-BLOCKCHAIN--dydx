@@ -146,11 +146,12 @@ def manage_trade_exits(client):
       z_score_level_check = abs(z_score_current) >= abs(ZSCORE_THRESH)###ORIGINALE abs(z_scoretraded)
       z_score_cross_check = (z_score_current < 0 and z_score_traded > 0) or (z_score_current > 0 and z_score_traded < 0)
 
+      is_close= False
       # Close trade
       if z_score_level_check and z_score_cross_check:
 
         # Initiate close trigger
-        is_close = False
+        is_close = True
 
     ###
     # Add any other close logic you want here
