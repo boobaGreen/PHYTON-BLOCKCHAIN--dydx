@@ -11,7 +11,7 @@ MODE = "DEVELOPMENT"
 VERSO_CONTRARIO = 1
 
 # Close all open positions and orders
-ABORT_ALL_POSITIONS = 1
+ABORT_ALL_POSITIONS = 0
 
 # Find Cointegrated Pairs
 FIND_COINTEGRATED = 1
