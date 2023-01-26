@@ -1,4 +1,4 @@
-from constants import ZSCORE_THRESH, USD_PER_TRADE, USD_MIN_COLLATERAL,TOKEN_FACTOR_10 
+from constants import ZSCORE_THRESH, USD_PER_TRADE, USD_MIN_COLLATERAL,TOKEN_FACTOR_10,VERSO_CONTRARIO
 from func_utils import format_number
 import time
 from datetime import datetime
@@ -75,22 +75,37 @@ def open_positions(client):
       if abs(z_score) >= ZSCORE_THRESH:
 
         # Ensure like-for-like not already open (diversify trading)
+
         is_base_open = is_open_positions(client, base_market)
         is_quote_open = is_open_positions(client, quote_market)
 
         # Place trade
+
         if not is_base_open and not is_quote_open:
 
-          # Determine side
+          # Determine side ORIGINAL SHAUN
           base_side = "BUY" if z_score < 0 else "SELL"
           quote_side = "BUY" if z_score > 0 else "SELL"
+
+          if VERSO_CONTRARIO :
+            base_side = "SELL" if z_score < 0 else "BUY"
+            quote_side = "SELL" if z_score > 0 else "BUY"
 
           # Get acceptable price in string format with correct number of decimals
           base_price = series_1[-1]
           quote_price = series_2[-1]
+
+
           accept_base_price = float(base_price) * 1.01 if z_score < 0 else float(base_price) * 0.99
           accept_quote_price = float(quote_price) * 1.01 if z_score > 0 else float(quote_price) * 0.99
           failsafe_base_price = float(base_price) * 0.05 if z_score < 0 else float(base_price) * 1.7
+
+          if VERSO_CONTRARIO :
+            accept_base_price = float(base_price) * 1.01 if z_score > 0 else float(base_price) * 0.99
+            accept_quote_price = float(quote_price) * 1.01 if z_score < 0 else float(quote_price) * 0.99
+            failsafe_base_price = float(base_price) * 0.05 if z_score > 0 else float(base_price) * 1.7
+
+
           base_tick_size = markets["markets"][base_market]["tickSize"]
           quote_tick_size = markets["markets"][quote_market]["tickSize"]
 
@@ -98,7 +113,7 @@ def open_positions(client):
           accept_base_price = format_number(accept_base_price, base_tick_size)
           accept_quote_price = format_number(accept_quote_price, quote_tick_size)
           accept_failsafe_base_price = format_number(failsafe_base_price, base_tick_size)
-
+  
           # Get size
           base_quantity = 1 / base_price * USD_PER_TRADE
           quote_quantity = 1 / quote_price * USD_PER_TRADE
@@ -173,6 +188,13 @@ def open_positions(client):
               if base_side=="SELL":
                 base_tot = (float(base_price)*float(base_size))
                 quote_tot = -(float(quote_price)*float(quote_size))
+
+              ################################################################
+              # AL POSTO DI accept_base_price and quote size
+              # vorrei inserire il valore effettivo del costo dell'ordine
+              # da prendere da dydx
+
+
 
               posizione= {"market_1":base_market, "market_2":quote_market,"base_side":base_side,"base_size":base_size,"base_price":accept_base_price,"quote_side":quote_side,"quote_size":quote_size,"quote_price":accept_quote_price,"z_score":z_score,"half_life":half_life,
               "order_time_m1":now,"order_time_m2":now,

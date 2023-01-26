@@ -1,4 +1,4 @@
-from constants import CLOSE_AT_ZSCORE_CROSS ,MODE,ZSCORE_THRESH
+from constants import CLOSE_AT_ZSCORE_CROSS ,MODE,ZSCORE_THRESH,VERSO_CONTRARIO
 from func_utils import format_number
 from func_public import get_candles_recent
 from func_cointegration import calculate_zscore
@@ -102,7 +102,7 @@ def manage_trade_exits(client):
    
 
 
-
+   
     # Perform matching checks
     check_m1 = position_market_m1 == order_market_m1 and position_size_m1_n == order_size_m1_n and position_side_m1 == order_side_m1
     check_m2 = position_market_m2 == order_market_m2 and position_size_m2_n == order_size_m2_n and position_side_m2 == order_side_m2
@@ -143,6 +143,7 @@ def manage_trade_exits(client):
 
 
       # Determine trigger
+    
       z_score_level_check = abs(z_score_current) >= abs(ZSCORE_THRESH)###ORIGINALE abs(z_scoretraded)
       z_score_cross_check = (z_score_current < 0 and z_score_traded > 0) or (z_score_current > 0 and z_score_traded < 0)
 
@@ -234,6 +235,10 @@ def manage_trade_exits(client):
           quote_tot = -(float(accept_price_m2)*float(position_size_m2))
         nowtemp = datetime.now()
         now = nowtemp.strftime("%d/%m/%Y %H:%M:%S")
+
+        #########################################################################
+        # IL accept_price_m1 e price m2 voglio prenderli da dydx
+
         posizione= {"market_1":position_market_m1, "market_2":position_market_m2,"base_side":side_m1,"base_size":position_size_m1,"base_price":accept_price_m1,"quote_side":side_m2,"quote_size":position_size_m2,"quote_price":accept_price_m2,"z_score":z_score_current,"half_life":"CHIUSURA","order_time_m1":now,"order_time_m2":now,"order_id_m1":position_order_id_m1,"order_id_m2":position_order_id_m2,"base_tot":base_tot,"quote_tot":quote_tot}
         storico.append(posizione)
 

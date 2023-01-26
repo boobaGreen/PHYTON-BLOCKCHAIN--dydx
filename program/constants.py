@@ -7,10 +7,11 @@ TOKEN_FACTOR_10 = ["XLM-USD","DOGE-USD","TRX-USD"]
 MODE = "DEVELOPMENT"
 # DEVELOPMENT O PRODUCTION
 
-
+# base and quote originali o invertite
+VERSO_CONTRARIO = 1
 
 # Close all open positions and orders
-ABORT_ALL_POSITIONS = 0
+ABORT_ALL_POSITIONS = 1
 
 # Find Cointegrated Pairs
 FIND_COINTEGRATED = 1
@@ -21,7 +22,7 @@ MANAGE_EXITS = 1
 # Place Trades
 PLACE_TRADES = 1
 
-SEND_STORICO_EMAIL = 1
+SEND_STORICO_EMAIL = 0
 
 # Resolution
 RESOLUTION = "1HOUR"
